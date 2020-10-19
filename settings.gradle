@@ -1,0 +1,3 @@
+include ':EnhencerCollector'
+include ':app'
+rootProject.name = "Collector Test"
