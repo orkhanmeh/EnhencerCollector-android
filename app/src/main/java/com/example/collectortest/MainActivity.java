@@ -1,26 +1,75 @@
 package com.example.collectortest;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {
 
+    OkHttpClient client = new OkHttpClient();
+    public static final MediaType JSON
+            = MediaType.get("application/json; charset=utf-8");
+
     private SharedPreferences prefs;
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        listingPage("deneme1", "deneme2", "deneme3");
+        try {
+            listingPage("deneme1", "deneme2", "deneme3");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
 
-    public void listingPage (String productCategory1, String productCategory2, String productCategory3) {
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    String post(String url, String json) throws IOException {
+        RequestBody body = RequestBody.create(json, JSON);
+        Request request = new Request.Builder()
+                .url(url)
+                .post(body)
+                .build();
+
+        Log.d("logo", "here");
+        Log.d("logo", request.toString());
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                Log.d("logo", "none");
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                Log.d("logo", "done");
+                Log.d("logo", response.toString());
+            }
+        });
+        return "";
+
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    public void listingPage (String productCategory1, String productCategory2, String productCategory3) throws IOException {
         String city = "Ankara";
         String country = "Turkey";
         String deviceType = "Android App";
@@ -35,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
             paramsObj.put("city", "Santa");
             paramsObj.put("country", "Laplandia");
             paramsObj.put("deviceType", "Android App");
-            paramsObj.put("token", "5f883e921523d77504eaea12");
+            paramsObj.put("token", "undefined");
 
 
         } catch(JSONException e) {
@@ -44,7 +93,10 @@ public class MainActivity extends AppCompatActivity {
 
         String params = paramsObj.toString();
 
-        CallAPI callAPI = new CallAPI();
-        callAPI.execute("https://app.enhencer.com/api/newListingEvent/", params);
+        Log.d("logo", "params");
+        Log.d("logo", params);
+
+        post("https://app.enhencer.com/api/newListingEvent/", params);
+        //post("https://httpbin.org/anything", params);
     }
 }
