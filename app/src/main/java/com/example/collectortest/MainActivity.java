@@ -2,7 +2,16 @@ package com.example.collectortest;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+
+import android.Manifest;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,6 +21,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -28,20 +39,15 @@ public class MainActivity extends AppCompatActivity {
             = MediaType.get("application/json; charset=utf-8");
 
     private SharedPreferences prefs;
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        try {
-            listingPage("deneme1", "deneme2", "deneme3");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        getLocation();
 
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     String post(String url, String json) throws IOException {
         RequestBody body = RequestBody.create(json, JSON);
         Request request = new Request.Builder()
@@ -68,8 +74,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    public void listingPage (String productCategory1, String productCategory2, String productCategory3) throws IOException {
+    public void listingPage(String productCategory1, String productCategory2, String productCategory3) throws IOException {
         String city = "Ankara";
         String country = "Turkey";
         String deviceType = "Android App";
@@ -87,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
             paramsObj.put("token", "undefined");
 
 
-        } catch(JSONException e) {
+        } catch (JSONException e) {
             Log.e("err", e.getMessage());
         }
 
@@ -99,4 +104,70 @@ public class MainActivity extends AppCompatActivity {
         post("https://app.enhencer.com/api/newListingEvent/", params);
         //post("https://httpbin.org/anything", params);
     }
+
+    public void productPage(String productID, int price, String productCategory1, String productCategory2, String productCategory3) throws IOException {
+        String city = "Ankara";
+        String country = "Turkey";
+        String deviceType = "Android App";
+
+        JSONObject paramsObj = new JSONObject();
+        try {
+            paramsObj.put("customerID", "denemeCustomerID");
+            paramsObj.put("visitorID", "denemeVisitor");
+            paramsObj.put("productCategory1", "pr1");
+            paramsObj.put("productCategory2", "pr2");
+            paramsObj.put("productCategory3", "pr3");
+            paramsObj.put("city", "Santa");
+            paramsObj.put("country", "Laplandia");
+            paramsObj.put("deviceType", "Android App");
+            paramsObj.put("token", "undefined");
+
+
+        } catch (JSONException e) {
+            Log.e("err", e.getMessage());
+        }
+
+        String params = paramsObj.toString();
+
+        Log.d("logo", "params");
+        Log.d("logo", params);
+
+        post("https://app.enhencer.com/api/newListingEvent/", params);
+        //post("https://httpbin.org/anything", params);
+    }
+
+    public void getLocation() {
+
+        LocationManager mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 100,
+                    10, mLocationListener);
+            return;
+        }
+
+    }
+
+    private final LocationListener mLocationListener = new LocationListener() {
+        @Override
+        public void onLocationChanged(final Location location) {
+            //your code here
+            Log.d("logo", "loc changed");
+        }
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+            Log.d("logo", "stat changed");
+        }
+
+        @Override
+        public void onProviderEnabled(String provider) {
+            Log.d("logo", "prov enabled");
+        }
+
+        @Override
+        public void onProviderDisabled(String provider) {
+            Log.d("logo", "prov disabled");
+        }
+    };
 }
