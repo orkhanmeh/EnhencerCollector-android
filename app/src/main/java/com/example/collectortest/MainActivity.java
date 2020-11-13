@@ -44,7 +44,16 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        getLocation();
+        // getLocation();
+        try {
+            this.listingPage("deneme1", "deneme2", "deneme3");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    void getVisitorID(){
 
     }
 
@@ -54,9 +63,6 @@ public class MainActivity extends AppCompatActivity {
                 .url(url)
                 .post(body)
                 .build();
-
-        Log.d("logo", "here");
-        Log.d("logo", request.toString());
 
         client.newCall(request).enqueue(new Callback() {
             @Override
@@ -83,9 +89,9 @@ public class MainActivity extends AppCompatActivity {
         try {
             paramsObj.put("customerID", "denemeCustomerID");
             paramsObj.put("visitorID", "denemeVisitor");
-            paramsObj.put("productCategory1", "pr1");
-            paramsObj.put("productCategory2", "pr2");
-            paramsObj.put("productCategory3", "pr3");
+            paramsObj.put("productCategory1", productCategory1);
+            paramsObj.put("productCategory2", productCategory2);
+            paramsObj.put("productCategory3", productCategory3);
             paramsObj.put("city", "Santa");
             paramsObj.put("country", "Laplandia");
             paramsObj.put("deviceType", "Android App");
@@ -98,11 +104,7 @@ public class MainActivity extends AppCompatActivity {
 
         String params = paramsObj.toString();
 
-        Log.d("logo", "params");
-        Log.d("logo", params);
-
         post("https://app.enhencer.com/api/newListingEvent/", params);
-        //post("https://httpbin.org/anything", params);
     }
 
     public void productPage(String productID, int price, String productCategory1, String productCategory2, String productCategory3) throws IOException {
