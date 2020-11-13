@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Address;
@@ -44,16 +45,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        // getLocation();
-        try {
+        getVisitorID();
+        //setVisitorID("firstTest");
+        /*try {
             this.listingPage("deneme1", "deneme2", "deneme3");
         } catch (IOException e) {
             e.printStackTrace();
-        }
-
-    }
-
-    void getVisitorID(){
+        }*/
 
     }
 
