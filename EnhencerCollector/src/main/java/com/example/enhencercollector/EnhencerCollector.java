@@ -2,6 +2,7 @@ package com.example.enhencercollector;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import org.json.JSONException;
@@ -13,15 +14,14 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
+import java.sql.Timestamp;
 
 public class EnhencerCollector {
 
     private static volatile EnhencerCollector collector = new EnhencerCollector();
 
-    public static  EnhencerCollector getInstance(){
+    public static EnhencerCollector getInstance(){
         return collector;
     }
 
@@ -29,24 +29,43 @@ public class EnhencerCollector {
     private String visitorID;
     private String token;
     private SharedPreferences prefs;
+    private Context context;
 
     public void EnhencerCollector (String token, Context context){
         prefs = context.getSharedPreferences("test", 0);
         this.token = token;
+        this.context = context;
+
+        generateVisitorID();
+
+        /*if (getVisitorID() == null) {
+            Log.d("logo", "set it");
+        } else {
+            Log.d("logo", "get it");
+            Log.d("logo", getVisitorID());
+        }*/
+
     }
 
     private String getVisitorID(){
-        SharedPreferences prefs = getPreferences(Context.MODE_PRIVATE);
-        String visitorID = prefs.getString("enh_visitor_id", "undefined");
-        Log.d("logo", visitorID);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        String visitorID = prefs.getString("enh_visitor_id", null);
         return visitorID;
     }
 
     void setVisitorID (String value){
-        SharedPreferences prefs = getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("enh_visitor_id", value);
         editor.commit();
+    }
+
+    void generateVisitorID (){
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+
+        System.out.println(">>>>>>>>>>>>");
+        System.out.println(timestamp);
+        System.out.println("<<<<<<<<<<<<<<");
     }
 
     public void listingPage (String productCategory1, String productCategory2, String productCategory3) throws IOException {

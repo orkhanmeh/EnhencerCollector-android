@@ -17,6 +17,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.example.enhencercollector.EnhencerCollector;
+
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -33,25 +35,23 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+
+
 public class MainActivity extends AppCompatActivity {
 
     OkHttpClient client = new OkHttpClient();
     public static final MediaType JSON
             = MediaType.get("application/json; charset=utf-8");
 
-    private SharedPreferences prefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        getVisitorID();
-        //setVisitorID("firstTest");
-        /*try {
-            this.listingPage("deneme1", "deneme2", "deneme3");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/
+
+        Context appContext = getApplicationContext();
+        EnhencerCollector enh = new EnhencerCollector();
+        enh.EnhencerCollector("deneme", appContext);
 
     }
 
